@@ -56,7 +56,7 @@ public class Main {
 				screenLoop.setDaemon(true);
 				screenLoop.start();
 
-				DefaultServer client = new DefaultServer(null, decompressQueue);
+				DefaultServer client = new DefaultServer(null, canvas, decompressQueue);
 				ServerReceiver.start(client, input);
 			} catch (Exception e) {
 				LOG.error("Failed start client.", e);

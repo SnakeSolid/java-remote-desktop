@@ -9,10 +9,13 @@ import ru.snake.remote.eventloop.KryoFactory;
 import ru.snake.remote.eventloop.message.CachedTileMessage;
 import ru.snake.remote.eventloop.message.ClearTilesMessage;
 import ru.snake.remote.eventloop.message.CreatedTileMessage;
+import ru.snake.remote.eventloop.message.ScreenSizeMessage;
 
 public interface ServerReceiver {
 
 	void onClearTiles();
+
+	void onScreenSize(int width, int height);
 
 	void onCreateTile(int x, int y, int index, byte[] data);
 
@@ -27,6 +30,9 @@ public interface ServerReceiver {
 
 			if (message instanceof ClearTilesMessage) {
 				receiver.onClearTiles();
+			} else if (message instanceof ScreenSizeMessage) {
+				ScreenSizeMessage m = (ScreenSizeMessage) message;
+				receiver.onScreenSize(m.getWidth(), m.getHeight());
 			} else if (message instanceof CreatedTileMessage) {
 				CreatedTileMessage m = (CreatedTileMessage) message;
 				receiver.onCreateTile(m.getX(), m.getY(), m.getIndex(), m.getData());

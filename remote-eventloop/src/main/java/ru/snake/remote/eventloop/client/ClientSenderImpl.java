@@ -5,6 +5,7 @@ import com.esotericsoftware.kryo.io.Output;
 
 import ru.snake.remote.eventloop.message.CachedTileMessage;
 import ru.snake.remote.eventloop.message.CreatedTileMessage;
+import ru.snake.remote.eventloop.message.ScreenSizeMessage;
 
 public class ClientSenderImpl implements ClientSender {
 
@@ -15,6 +16,12 @@ public class ClientSenderImpl implements ClientSender {
 	public ClientSenderImpl(final Kryo kryo, final Output output) {
 		this.kryo = kryo;
 		this.output = output;
+	}
+
+	@Override
+	public void sendScreenSize(int width, int height) {
+		kryo.writeClassAndObject(output, new ScreenSizeMessage(width, height));
+		output.flush();
 	}
 
 	@Override

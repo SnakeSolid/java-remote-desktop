@@ -35,11 +35,13 @@ public class ScreenLoop implements Runnable {
 
 		Thread thread = Thread.currentThread();
 		RobotWrapper robot = RobotWrapper.create();
+		ScreenSizeSender screenSender = new ScreenSizeSender(sender);
 		long startTime = System.currentTimeMillis();
 
 		while (!thread.isInterrupted()) {
 			BufferedImage screen = robot.createScreenCapture();
 			TileSender tileSender = new TileSender(sender);
+			screenSender.send(screen.getWidth(), screen.getHeight());
 
 			synchronized (compressor) {
 				compressor.compress(screen, tileSender::send, tileSender::send);

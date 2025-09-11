@@ -9,6 +9,8 @@ import ru.snake.remote.eventloop.KryoFactory;
 
 public interface ClientSender {
 
+	void sendScreenSize(int width, int height);
+
 	void sendCachedTile(int x, int y, int index);
 
 	void sendCreatedTile(int x, int y, int index, byte[] data);

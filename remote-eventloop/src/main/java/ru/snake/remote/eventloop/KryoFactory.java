@@ -5,6 +5,7 @@ import com.esotericsoftware.kryo.Kryo;
 import ru.snake.remote.eventloop.message.CachedTileMessage;
 import ru.snake.remote.eventloop.message.ClearTilesMessage;
 import ru.snake.remote.eventloop.message.CreatedTileMessage;
+import ru.snake.remote.eventloop.message.ScreenSizeMessage;
 
 public class KryoFactory {
 
@@ -14,6 +15,7 @@ public class KryoFactory {
 		KRYO = new Kryo();
 		KRYO.register(byte[].class);
 		KRYO.register(ClearTilesMessage.class);
+		KRYO.register(ScreenSizeMessage.class);
 		KRYO.register(CachedTileMessage.class);
 		KRYO.register(CreatedTileMessage.class);
 	}
