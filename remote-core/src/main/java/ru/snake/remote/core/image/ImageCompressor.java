@@ -1,0 +1,53 @@
+package ru.snake.remote.core.image;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import ru.snake.remote.core.block.BlockCompressor;
+import ru.snake.remote.core.block.HalfChromaCompressor;
+
+public class ImageCompressor {
+
+	private final HSLBuffer hslBuffer;
+
+	private final BlockCompressor compressor;
+
+	public ImageCompressor() {
+		this.hslBuffer = new HSLBuffer();
+		this.compressor = new HalfChromaCompressor();
+	}
+
+	public byte[] compress(final BufferedImage image) {
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				DataOutputStream dos = new DataOutputStream(baos)) {
+			int width = image.getWidth();
+			int height = image.getHeight();
+			hslBuffer.calculate(image);
+
+			dos.writeInt(width);
+			dos.writeInt(height);
+
+			for (int y = 0; y < height; y += compressor.getHeight()) {
+				for (int x = 0; x < width; x += compressor.getWidth()) {
+					byte[] block = compressor.compress(x, y, hslBuffer);
+
+					dos.write(block);
+				}
+			}
+
+			dos.close();
+
+			return baos.toByteArray();
+		} catch (IOException e) {
+			throw new RuntimeException("Compression error", e);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "ImageCompressor [hslBuffer=" + hslBuffer + ", compressor=" + compressor + "]";
+	}
+
+}
