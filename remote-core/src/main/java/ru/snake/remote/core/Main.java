@@ -16,14 +16,19 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		TiledCompressor compressor = new TiledCompressor();
 		TiledDecompressor decompressor = new TiledDecompressor();
-		List<CreatedTile> createdTiles = new ArrayList<>();
-		List<CachedTile> cachedTiles = new ArrayList<>();
-		BufferedImage sourceImage = ImageIO.read(new File(args[0]));
-		compressor.compress(sourceImage, createdTiles::add, cachedTiles::add);
-		createdTiles.forEach(decompressor::decompress);
-		cachedTiles.forEach(decompressor::decompress);
-		BufferedImage resultImage = decompressor.getImage();
-		ImageIO.write(resultImage, "png", new File(args[1]));
+
+		for (int index = 1; index < args.length; index += 1) {
+			List<CreatedTile> createdTiles = new ArrayList<>();
+			List<CachedTile> cachedTiles = new ArrayList<>();
+
+			BufferedImage sourceImage = ImageIO.read(new File(args[index]));
+			compressor.compress(sourceImage, createdTiles::add, cachedTiles::add);
+			createdTiles.forEach(decompressor::decompress);
+			cachedTiles.forEach(decompressor::decompress);
+
+			BufferedImage resultImage = decompressor.getImage();
+			ImageIO.write(resultImage, "png", new File(args[0]));
+		}
 	}
 
 }

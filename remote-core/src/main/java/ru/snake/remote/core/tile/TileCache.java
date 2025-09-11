@@ -1,71 +1,60 @@
 package ru.snake.remote.core.tile;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class TileCache {
 
 	private static final int DEFAULT_SIZE = 1024;
 
-	private final Map<Bytes, Integer> map;
+	private final Map<Bytes, Integer> indexMap;
 
-	private final Bytes[] list;
-
-	private final int listSize;
-
-	private int nextIndex;
+	private final int capacity;
 
 	public TileCache() {
 		this(DEFAULT_SIZE);
 	}
 
-	public TileCache(final int size) {
-		this.map = new HashMap<>();
-		this.list = new Bytes[size];
-		this.listSize = size;
-		this.nextIndex = 0;
-	}
-
-	public byte[] get(int index) {
-		Bytes bytes = list[index];
-
-		if (bytes != null) {
-			return bytes.getBytes();
-		} else {
-			return null;
-		}
+	public TileCache(final int capacity) {
+		this.indexMap = new LinkedHashMap<>();
+		this.capacity = capacity;
 	}
 
 	public TileResult put(final byte[] data) {
 		Bytes bytes = new Bytes(data);
-		Integer tileIndex = map.get(bytes);
+		Integer tileIndex = indexMap.get(bytes);
 
 		if (tileIndex != null) {
+			// Move value to top
+			indexMap.remove(bytes);
+			indexMap.put(bytes, tileIndex);
+
 			return new TileResult(true, tileIndex);
 		}
 
-		map.put(bytes, nextIndex);
-		tileIndex = nextIndex;
-		nextIndex = (nextIndex + 1) % listSize;
+		if (indexMap.size() < capacity) {
+			tileIndex = indexMap.size();
+		} else {
+			// Remove most oldest value
+			Iterator<Entry<Bytes, Integer>> it = indexMap.entrySet().iterator();
+			tileIndex = it.next().getValue();
+			it.remove();
+		}
+
+		indexMap.put(bytes, tileIndex);
 
 		return new TileResult(false, tileIndex);
 	}
 
-	public void put(int index, byte[] data) {
-		Bytes bytes = new Bytes(data);
-		map.put(bytes, index);
-		list[index] = bytes;
-	}
-
 	public void clear() {
-		this.map.clear();
-		this.nextIndex = 0;
+		this.indexMap.clear();
 	}
 
 	@Override
 	public String toString() {
-		return "TileCache [map=" + map + ", list=" + Arrays.toString(list) + "]";
+		return "TileCache [indexMap=" + indexMap + ", capacity=" + capacity + "]";
 	}
 
 }
