@@ -22,15 +22,17 @@ public class ImageCompressor {
 	public byte[] compress(final BufferedImage image) {
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				DataOutputStream dos = new DataOutputStream(baos)) {
-			int width = image.getWidth();
-			int height = image.getHeight();
+			int blockWidth = compressor.getWidth();
+			int blockHeight = compressor.getHeight();
+			int width = image.getWidth() / blockWidth * blockWidth;
+			int height = image.getHeight() / blockHeight * blockHeight;
 			hslBuffer.calculate(image);
 
 			dos.writeInt(width);
 			dos.writeInt(height);
 
-			for (int y = 0; y < height; y += compressor.getHeight()) {
-				for (int x = 0; x < width; x += compressor.getWidth()) {
+			for (int y = 0; y < height; y += blockHeight) {
+				for (int x = 0; x < width; x += blockWidth) {
 					byte[] block = compressor.compress(x, y, hslBuffer);
 
 					dos.write(block);
