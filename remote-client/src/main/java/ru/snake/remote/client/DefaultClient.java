@@ -10,14 +10,37 @@ public class DefaultClient implements ClientReceiver {
 
 	private final ScreenLoop screenLoop;
 
-	public DefaultClient(final ClientSender sender, final ScreenLoop screenLoop) {
+	private final RobotWrapper robot;
+
+	public DefaultClient(final ClientSender sender, final ScreenLoop screenLoop, final RobotWrapper robot) {
 		this.sender = sender;
 		this.screenLoop = screenLoop;
+		this.robot = robot;
 	}
 
 	@Override
 	public void onClearTiles() {
 		screenLoop.clearCache();
+	}
+
+	@Override
+	public void onMousePress(int x, int y, int button) {
+		robot.mousePress(x, y, button);
+	}
+
+	@Override
+	public void onMouseRelease(int x, int y, int button) {
+		robot.mouseRelease(x, y, button);
+	}
+
+	@Override
+	public void onMouseMove(int x, int y) {
+		robot.mouseMove(x, y);
+	}
+
+	@Override
+	public void onMouseScroll(int units) {
+		robot.mouseWheel(units);
 	}
 
 }

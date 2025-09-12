@@ -32,13 +32,14 @@ public class Main {
 			socket.setTcpNoDelay(true);
 
 			try (InputStream input = socket.getInputStream(); OutputStream output = socket.getOutputStream()) {
+				RobotWrapper robot = RobotWrapper.create();
 				ClientSender sender = ClientSender.create(output);
-				ScreenLoop screenLoop = new ScreenLoop(sender);
+				ScreenLoop screenLoop = new ScreenLoop(sender, robot);
 				Thread screenThread = new Thread(screenLoop, "Screen loop");
 				screenThread.setDaemon(true);
 				screenThread.start();
 
-				DefaultClient client = new DefaultClient(sender, screenLoop);
+				DefaultClient client = new DefaultClient(sender, screenLoop, robot);
 				ClientReceiver.start(client, input);
 			} catch (Exception e) {
 				LOG.error("Failed to start client.", e);

@@ -11,6 +11,14 @@ public interface ServerSender {
 
 	void sendClearTiles();
 
+	void sendMousePress(int x, int y, int button);
+
+	void sendMouseRelease(int x, int y, int button);
+
+	void sendMouseMove(int x, int y);
+
+	void sendMouseScroll(int units);
+
 	public static ServerSender create(final OutputStream stream) {
 		Kryo kryo = KryoFactory.kryo();
 		Output output = new Output(stream);

@@ -4,6 +4,10 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Output;
 
 import ru.snake.remote.eventloop.message.ClearTilesMessage;
+import ru.snake.remote.eventloop.message.MouseMoveMessage;
+import ru.snake.remote.eventloop.message.MousePressMessage;
+import ru.snake.remote.eventloop.message.MouseReleaseMessage;
+import ru.snake.remote.eventloop.message.MouseScrollMessage;
 
 public class ServerSenderImpl implements ServerSender {
 
@@ -19,6 +23,30 @@ public class ServerSenderImpl implements ServerSender {
 	@Override
 	public synchronized void sendClearTiles() {
 		kryo.writeClassAndObject(output, new ClearTilesMessage());
+		output.flush();
+	}
+
+	@Override
+	public synchronized void sendMousePress(int x, int y, int button) {
+		kryo.writeClassAndObject(output, new MousePressMessage(x, y, button));
+		output.flush();
+	}
+
+	@Override
+	public synchronized void sendMouseRelease(int x, int y, int button) {
+		kryo.writeClassAndObject(output, new MouseReleaseMessage(x, y, button));
+		output.flush();
+	}
+
+	@Override
+	public synchronized void sendMouseMove(int x, int y) {
+		kryo.writeClassAndObject(output, new MouseMoveMessage(x, y));
+		output.flush();
+	}
+
+	@Override
+	public void sendMouseScroll(int units) {
+		kryo.writeClassAndObject(output, new MouseScrollMessage(units));
 		output.flush();
 	}
 

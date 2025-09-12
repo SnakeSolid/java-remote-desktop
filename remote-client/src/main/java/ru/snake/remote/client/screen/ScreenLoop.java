@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ru.snake.remote.client.RobotWrapper;
 import ru.snake.remote.core.TiledCompressor;
 import ru.snake.remote.eventloop.client.ClientSender;
 
@@ -18,9 +19,12 @@ public class ScreenLoop implements Runnable {
 
 	private final ClientSender sender;
 
-	public ScreenLoop(final ClientSender sender) {
+	private final RobotWrapper robot;
+
+	public ScreenLoop(final ClientSender sender, final RobotWrapper robot) {
 		this.compressor = new TiledCompressor();
 		this.sender = sender;
+		this.robot = robot;
 	}
 
 	public void clearCache() {
@@ -34,11 +38,10 @@ public class ScreenLoop implements Runnable {
 		LOG.info("Screen loop started.");
 
 		Thread thread = Thread.currentThread();
-		RobotWrapper robot = RobotWrapper.create();
 		ScreenSizeSender screenSender = new ScreenSizeSender(sender);
-		long startTime = System.currentTimeMillis();
 
 		while (!thread.isInterrupted()) {
+			long startTime = System.currentTimeMillis();
 			BufferedImage screen = robot.createScreenCapture();
 			TileSender tileSender = new TileSender(sender);
 			screenSender.send(screen.getWidth(), screen.getHeight());
@@ -55,7 +58,6 @@ public class ScreenLoop implements Runnable {
 				tileSender.getCached(),
 				tileSender.getCreated()
 			);
-			startTime = endTime;
 
 			try {
 				Thread.sleep(Math.max(CAPTURE_INTERVAL_MS - delta, 0));

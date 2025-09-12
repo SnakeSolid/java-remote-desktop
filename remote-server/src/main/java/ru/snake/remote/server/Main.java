@@ -20,7 +20,9 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import ru.snake.remote.core.tile.Tile;
 import ru.snake.remote.eventloop.server.ServerReceiver;
+import ru.snake.remote.eventloop.server.ServerSender;
 import ru.snake.remote.server.screen.ImageCanvas;
+import ru.snake.remote.server.screen.MouseEventSender;
 import ru.snake.remote.server.screen.ScreenLoop;
 
 public class Main {
@@ -44,14 +46,23 @@ public class Main {
 					OutputStream output = clientSocket.getOutputStream()) {
 				LOG.info("Client connected!");
 
-				JFrame frame = new JFrame("Client: " + clientSocket.getRemoteSocketAddress());
+				ServerSender sender = ServerSender.create(output);
+
+				// ------------------------------------
 				ImageCanvas canvas = new ImageCanvas();
+				MouseEventSender eventSender = new MouseEventSender(sender, canvas);
+				canvas.addMouseListener(eventSender);
+				canvas.addMouseMotionListener(eventSender);
+				canvas.addMouseWheelListener(eventSender);
+
+				JFrame frame = new JFrame("Client: " + clientSocket.getRemoteSocketAddress());
 				frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				frame.add(canvas);
 				frame.pack();
 				frame.setVisible(true);
+				// ------------------------------------
 
-				BlockingQueue<Tile> decompressQueue = new ArrayBlockingQueue<>(256);
+				BlockingQueue<Tile> decompressQueue = new ArrayBlockingQueue<>(1024);
 				Thread screenLoop = new Thread(new ScreenLoop(canvas, decompressQueue), "Screen loop");
 				screenLoop.setDaemon(true);
 				screenLoop.start();
