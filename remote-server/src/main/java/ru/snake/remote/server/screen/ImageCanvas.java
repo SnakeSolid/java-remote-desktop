@@ -1,7 +1,9 @@
 package ru.snake.remote.server.screen;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -36,6 +38,9 @@ public class ImageCanvas extends JPanel {
 
 	@Override
 	public void paint(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+
 		int canvasWidth = getWidth();
 		int canvasHeight = getHeight();
 		int imageWidth = buffer.getWidth();
@@ -43,28 +48,19 @@ public class ImageCanvas extends JPanel {
 
 		switch (stretchMode) {
 		case STRETCH:
-			g.drawImage(buffer, 0, 0, canvasWidth, canvasHeight, null);
+			g2d.drawImage(buffer, 0, 0, canvasWidth, canvasHeight, null);
 			break;
 
 		case FIT_SIZE:
 			break;
 
 		case KEEP_SIZE:
-			g.drawImage(buffer, (canvasWidth - imageWidth) / 2, (canvasHeight - imageHeight) / 2, null);
+			g2d.drawImage(buffer, (canvasWidth - imageWidth) / 2, (canvasHeight - imageHeight) / 2, null);
 			break;
 
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + stretchMode);
 		}
-	}
-
-	public static void main(String[] args) {
-		int canvasWidth = 200;
-		int imageWidth = 100;
-		int value = -250;
-		int result = Integer.max(0, Integer.min(Math.round((float) value * imageWidth / canvasWidth), imageWidth - 1));
-
-		System.out.println(result);
 	}
 
 	public Point localToImage(int x, int y) {
