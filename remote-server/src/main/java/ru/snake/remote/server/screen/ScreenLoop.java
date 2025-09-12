@@ -36,9 +36,10 @@ public class ScreenLoop implements Runnable {
 		LOG.info("Screen loop started.");
 
 		Thread thread = Thread.currentThread();
-		long startTime = System.currentTimeMillis();
 
 		while (!thread.isInterrupted()) {
+			long startTime = System.currentTimeMillis();
+
 			while (true) {
 				Tile tile = tileQueue.poll();
 
@@ -67,7 +68,6 @@ public class ScreenLoop implements Runnable {
 			long endTime = System.currentTimeMillis();
 			long delta = endTime - startTime;
 			LOG.info("Screen update time = {}.", delta);
-			startTime = endTime;
 
 			try {
 				Thread.sleep(Math.max(CAPTURE_INTERVAL_MS - delta, 0));

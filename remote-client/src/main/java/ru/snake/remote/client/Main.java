@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.esotericsoftware.kryo.KryoException;
 
 import picocli.CommandLine;
 import ru.snake.remote.client.screen.ScreenLoop;
@@ -26,26 +28,40 @@ public class Main {
 		System.exit(exitCode);
 	}
 
-	public static void execute(final String address, final int port)
-			throws AWTException, UnknownHostException, IOException {
-		try (Socket socket = new Socket(address, port)) {
-			socket.setTcpNoDelay(true);
+	public static void execute(final String address, final int port, final boolean reconnect, final int reconnectDelay)
+			throws IOException {
+		while (true) {
+			try (Socket socket = new Socket(address, port)) {
+				socket.setTcpNoDelay(true);
 
-			try (InputStream input = socket.getInputStream(); OutputStream output = socket.getOutputStream()) {
-				RobotWrapper robot = RobotWrapper.create();
-				ClientSender sender = ClientSender.create(output);
-				ScreenLoop screenLoop = new ScreenLoop(sender, robot);
-				Thread screenThread = new Thread(screenLoop, "Screen loop");
-				screenThread.setDaemon(true);
-				screenThread.start();
+				try (InputStream input = socket.getInputStream(); OutputStream output = socket.getOutputStream()) {
+					RobotWrapper robot = RobotWrapper.create();
+					ClientSender sender = ClientSender.create(output);
+					ScreenLoop screenLoop = new ScreenLoop(sender, robot);
+					Thread screenThread = new Thread(screenLoop, "Screen loop");
+					screenThread.setDaemon(true);
+					screenThread.start();
 
-				DefaultClient client = new DefaultClient(sender, screenLoop, robot);
-				ClientReceiver.start(client, input);
-			} catch (Exception e) {
-				LOG.error("Failed to start client.", e);
+					DefaultClient client = new DefaultClient(sender, screenLoop, robot);
+					ClientReceiver.start(client, input);
+				} catch (IOException | KryoException e) {
+					LOG.error("Failed to communication with server.", e);
+				}
+			} catch (IOException e) {
+				LOG.error("Failed to connect to server.");
 			}
-		} catch (Exception e) {
-			LOG.error("Failed to connect to server.", e);
+
+			if (reconnect) {
+				break;
+			} else {
+				try {
+					LOG.info("Reconnecting in {} seconds...", reconnectDelay);
+
+					Thread.sleep(Duration.ofSeconds(reconnectDelay).toMillis());
+				} catch (InterruptedException ie) {
+					break;
+				}
+			}
 		}
 	}
 
