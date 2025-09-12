@@ -20,6 +20,9 @@ public class ImageCanvas extends JPanel {
 	public ImageCanvas() {
 		stretchMode = StretchMode.STRETCH;
 		buffer = new BufferedImage(DEFAULT_WIDTH, DEFAULT_HEIGHT, BufferedImage.TYPE_INT_RGB);
+
+		setFocusable(true);
+		setFocusTraversalKeysEnabled(false);
 	}
 
 	public final void setImageSize(final int width, final int height) {

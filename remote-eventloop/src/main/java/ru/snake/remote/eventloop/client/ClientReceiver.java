@@ -7,6 +7,8 @@ import com.esotericsoftware.kryo.io.Input;
 
 import ru.snake.remote.eventloop.KryoFactory;
 import ru.snake.remote.eventloop.message.ClearTilesMessage;
+import ru.snake.remote.eventloop.message.KeyPressMessage;
+import ru.snake.remote.eventloop.message.KeyReleaseMessage;
 import ru.snake.remote.eventloop.message.MouseMoveMessage;
 import ru.snake.remote.eventloop.message.MousePressMessage;
 import ru.snake.remote.eventloop.message.MouseReleaseMessage;
@@ -23,6 +25,10 @@ public interface ClientReceiver {
 	void onMouseMove(int x, int y);
 
 	void onMouseScroll(int units);
+
+	void onKeyPress(int keycode);
+
+	void onKeyRelease(int keycode);
 
 	public static void start(final ClientReceiver receiver, final InputStream stream) {
 		Kryo kryo = KryoFactory.kryo();
@@ -45,6 +51,12 @@ public interface ClientReceiver {
 			} else if (message instanceof MouseScrollMessage) {
 				MouseScrollMessage m = (MouseScrollMessage) message;
 				receiver.onMouseScroll(m.getUnits());
+			} else if (message instanceof KeyPressMessage) {
+				KeyPressMessage m = (KeyPressMessage) message;
+				receiver.onKeyPress(m.getKeycode());
+			} else if (message instanceof KeyReleaseMessage) {
+				KeyReleaseMessage m = (KeyReleaseMessage) message;
+				receiver.onKeyRelease(m.getKeycode());
 			} else {
 				throw new RuntimeException("Unsupported message type: " + message.getClass());
 			}

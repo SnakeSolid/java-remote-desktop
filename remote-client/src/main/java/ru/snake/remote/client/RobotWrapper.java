@@ -46,6 +46,18 @@ public class RobotWrapper {
 		}
 	}
 
+	public void keyPress(int keycode) {
+		if (keycode != 0) {
+			robot.keyPress(keycode);
+		}
+	}
+
+	public void keyRelease(int keycode) {
+		if (keycode != 0) {
+			robot.keyRelease(keycode);
+		}
+	}
+
 	private int indexToButton(int button) {
 		switch (button) {
 		case 1:

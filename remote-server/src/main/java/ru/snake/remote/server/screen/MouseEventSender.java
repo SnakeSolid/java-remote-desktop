@@ -22,39 +22,18 @@ public class MouseEventSender implements MouseListener, MouseMotionListener, Mou
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("click " + e.getClickCount());
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		System.out.println("press " + e.getButton());
-
 		Point point = canvas.localToImage(e.getX(), e.getY());
 		sender.sendMousePress(point.x, point.y, buttonToIndex(e.getButton()));
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		System.out.println("release " + e.getButton());
-
 		Point point = canvas.localToImage(e.getX(), e.getY());
 		sender.sendMouseRelease(point.x, point.y, buttonToIndex(e.getButton()));
-	}
-
-	private int buttonToIndex(int button) {
-		switch (button) {
-		case MouseEvent.BUTTON1:
-			return 1;
-
-		case MouseEvent.BUTTON2:
-			return 2;
-
-		case MouseEvent.BUTTON3:
-			return 3;
-
-		default:
-			return 0;
-		}
 	}
 
 	@Override
@@ -80,6 +59,22 @@ public class MouseEventSender implements MouseListener, MouseMotionListener, Mou
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		sender.sendMouseScroll(e.getUnitsToScroll());
+	}
+
+	private int buttonToIndex(int button) {
+		switch (button) {
+		case MouseEvent.BUTTON1:
+			return 1;
+
+		case MouseEvent.BUTTON2:
+			return 2;
+
+		case MouseEvent.BUTTON3:
+			return 3;
+
+		default:
+			return 0;
+		}
 	}
 
 }

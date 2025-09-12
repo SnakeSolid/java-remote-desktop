@@ -22,6 +22,7 @@ import ru.snake.remote.core.tile.Tile;
 import ru.snake.remote.eventloop.server.ServerReceiver;
 import ru.snake.remote.eventloop.server.ServerSender;
 import ru.snake.remote.server.screen.ImageCanvas;
+import ru.snake.remote.server.screen.KeyboardEventSender;
 import ru.snake.remote.server.screen.MouseEventSender;
 import ru.snake.remote.server.screen.ScreenLoop;
 
@@ -50,10 +51,12 @@ public class Main {
 
 				// ------------------------------------
 				ImageCanvas canvas = new ImageCanvas();
-				MouseEventSender eventSender = new MouseEventSender(sender, canvas);
-				canvas.addMouseListener(eventSender);
-				canvas.addMouseMotionListener(eventSender);
-				canvas.addMouseWheelListener(eventSender);
+				MouseEventSender mouseSender = new MouseEventSender(sender, canvas);
+				KeyboardEventSender keyboardSender = new KeyboardEventSender(sender);
+				canvas.addMouseListener(mouseSender);
+				canvas.addMouseMotionListener(mouseSender);
+				canvas.addMouseWheelListener(mouseSender);
+				canvas.addKeyListener(keyboardSender);
 
 				JFrame frame = new JFrame("Client: " + clientSocket.getRemoteSocketAddress());
 				frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

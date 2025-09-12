@@ -19,6 +19,10 @@ public interface ServerSender {
 
 	void sendMouseScroll(int units);
 
+	void sendKeyPress(int keycode);
+
+	void sendKeyRelease(int keycode);
+
 	public static ServerSender create(final OutputStream stream) {
 		Kryo kryo = KryoFactory.kryo();
 		Output output = new Output(stream);

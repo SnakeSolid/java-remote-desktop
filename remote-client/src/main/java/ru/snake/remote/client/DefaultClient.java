@@ -43,4 +43,14 @@ public class DefaultClient implements ClientReceiver {
 		robot.mouseWheel(units);
 	}
 
+	@Override
+	public void onKeyPress(int keycode) {
+		robot.keyPress(keycode);
+	}
+
+	@Override
+	public void onKeyRelease(int keycode) {
+		robot.keyRelease(keycode);
+	}
+
 }
