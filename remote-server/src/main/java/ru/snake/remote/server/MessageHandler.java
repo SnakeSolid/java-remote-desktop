@@ -7,6 +7,8 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.esotericsoftware.kryo.KryoException;
+
 import ru.snake.remote.eventloop.server.ServerReceiver;
 
 public class MessageHandler implements Runnable {
@@ -46,7 +48,7 @@ public class MessageHandler implements Runnable {
 
 			try {
 				clientSocket.close();
-			} catch (IOException e) {
+			} catch (IOException | KryoException e) {
 				LOG.warn("Failed to close client socket", e);
 			}
 		}
