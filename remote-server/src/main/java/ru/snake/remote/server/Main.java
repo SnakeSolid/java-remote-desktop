@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
+import ru.snake.remote.server.component.ServerFrame;
 
 public class Main {
 
@@ -33,7 +34,7 @@ public class Main {
 		ServerFrame frame = new ServerFrame();
 		SwingUtilities.invokeLater(() -> frame.setVisible(true));
 
-		Runnable acceptor = new ConnectionAcceptor(serverSocket, frame);
+		Runnable acceptor = new ConnectionAcceptor(serverSocket, frame.getClientList());
 		Thread server = new Thread(acceptor, "Incomint connection acceptor");
 		server.setDaemon(true);
 		server.start();

@@ -10,12 +10,13 @@ import org.slf4j.LoggerFactory;
 import com.esotericsoftware.kryo.KryoException;
 
 import ru.snake.remote.eventloop.server.ServerReceiver;
+import ru.snake.remote.server.component.ClientList;
 
 public class MessageHandler implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MessageHandler.class);
 
-	private final ServerFrame frame;
+	private final ClientList frame;
 
 	private final int clientIndex;
 
@@ -26,7 +27,7 @@ public class MessageHandler implements Runnable {
 	private final InputStream input;
 
 	public MessageHandler(
-		final ServerFrame frame,
+		final ClientList frame,
 		final int clientIndex,
 		final Socket clientSocket,
 		final DefaultServer client,
@@ -44,7 +45,7 @@ public class MessageHandler implements Runnable {
 		try {
 			ServerReceiver.start(client, input);
 		} finally {
-			frame.removeClientTab(clientIndex);
+			frame.removeClient(clientIndex);
 
 			try {
 				clientSocket.close();

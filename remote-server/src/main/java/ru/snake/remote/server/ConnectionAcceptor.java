@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import ru.snake.remote.core.tile.Tile;
 import ru.snake.remote.eventloop.server.ServerSender;
+import ru.snake.remote.server.component.ClientList;
 import ru.snake.remote.server.screen.ImageCanvas;
 import ru.snake.remote.server.screen.KeyboardEventSender;
 import ru.snake.remote.server.screen.MouseEventSender;
@@ -25,11 +26,11 @@ public class ConnectionAcceptor implements Runnable {
 
 	private final ServerSocket serverSocket;
 
-	private final ServerFrame frame;
+	private final ClientList clientList;
 
-	public ConnectionAcceptor(final ServerSocket serverSocket, final ServerFrame frame) {
+	public ConnectionAcceptor(final ServerSocket serverSocket, final ClientList clientList) {
 		this.serverSocket = serverSocket;
-		this.frame = frame;
+		this.clientList = clientList;
 	}
 
 	@Override
@@ -66,7 +67,8 @@ public class ConnectionAcceptor implements Runnable {
 		canvas.addMouseMotionListener(mouseSender);
 		canvas.addMouseWheelListener(mouseSender);
 		canvas.addKeyListener(keyboardSender);
-		int clientIndex = frame.addClientTab(remoteAddress, canvas);
+		int clientIndex = clientList
+			.addClient(remoteAddress, canvas, keyboardSender::setEnabled, mouseSender::setEnabled);
 		// ------------------------------------
 
 		BlockingQueue<Tile> decompressQueue = new ArrayBlockingQueue<>(1024);
@@ -78,7 +80,7 @@ public class ConnectionAcceptor implements Runnable {
 		screenLoop.start();
 
 		DefaultServer client = new DefaultServer(null, canvas, decompressQueue);
-		MessageHandler messageHandler = new MessageHandler(frame, clientIndex, clientSocket, client, input);
+		MessageHandler messageHandler = new MessageHandler(clientList, clientIndex, clientSocket, client, input);
 		Thread serverReceiver = new Thread(messageHandler, String.format("Message handler (%s)", remoteAddress));
 		serverReceiver.setDaemon(true);
 		serverReceiver.start();

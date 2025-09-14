@@ -15,9 +15,16 @@ public class MouseEventSender implements MouseListener, MouseMotionListener, Mou
 
 	private final ImageCanvas canvas;
 
+	private boolean isEnabled;
+
 	public MouseEventSender(final ServerSender sender, final ImageCanvas canvas) {
 		this.sender = sender;
 		this.canvas = canvas;
+		this.isEnabled = true;
+	}
+
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
 	}
 
 	@Override
@@ -26,14 +33,20 @@ public class MouseEventSender implements MouseListener, MouseMotionListener, Mou
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		Point point = canvas.localToImage(e.getX(), e.getY());
-		sender.sendMousePress(point.x, point.y, buttonToIndex(e.getButton()));
+		if (isEnabled) {
+			Point point = canvas.localToImage(e.getX(), e.getY());
+			sender.sendMousePress(point.x, point.y, buttonToIndex(e.getButton()));
+			e.consume();
+		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		Point point = canvas.localToImage(e.getX(), e.getY());
-		sender.sendMouseRelease(point.x, point.y, buttonToIndex(e.getButton()));
+		if (isEnabled) {
+			Point point = canvas.localToImage(e.getX(), e.getY());
+			sender.sendMouseRelease(point.x, point.y, buttonToIndex(e.getButton()));
+			e.consume();
+		}
 	}
 
 	@Override
@@ -46,19 +59,28 @@ public class MouseEventSender implements MouseListener, MouseMotionListener, Mou
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		Point point = canvas.localToImage(e.getX(), e.getY());
-		sender.sendMouseMove(point.x, point.y);
+		if (isEnabled) {
+			Point point = canvas.localToImage(e.getX(), e.getY());
+			sender.sendMouseMove(point.x, point.y);
+			e.consume();
+		}
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		Point point = canvas.localToImage(e.getX(), e.getY());
-		sender.sendMouseMove(point.x, point.y);
+		if (isEnabled) {
+			Point point = canvas.localToImage(e.getX(), e.getY());
+			sender.sendMouseMove(point.x, point.y);
+			e.consume();
+		}
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		sender.sendMouseScroll(e.getUnitsToScroll());
+		if (isEnabled) {
+			sender.sendMouseScroll(e.getUnitsToScroll());
+			e.consume();
+		}
 	}
 
 	private int buttonToIndex(int button) {

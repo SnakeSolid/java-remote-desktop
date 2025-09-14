@@ -9,8 +9,17 @@ public class KeyboardEventSender implements KeyListener {
 
 	private final ServerSender sender;
 
+	private boolean isEnabled;
+
 	public KeyboardEventSender(final ServerSender sender) {
 		this.sender = sender;
+		this.isEnabled = true;
+	}
+
+	public void setEnabled(boolean isEnabled) {
+		System.out.println("keyboard " + isEnabled);
+
+		this.isEnabled = isEnabled;
 	}
 
 	@Override
@@ -19,14 +28,18 @@ public class KeyboardEventSender implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		sender.sendKeyPress(e.getKeyCode());
-		e.consume();
+		if (isEnabled) {
+			sender.sendKeyPress(e.getKeyCode());
+			e.consume();
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		sender.sendKeyRelease(e.getKeyCode());
-		e.consume();
+		if (isEnabled) {
+			sender.sendKeyRelease(e.getKeyCode());
+			e.consume();
+		}
 	}
 
 }
