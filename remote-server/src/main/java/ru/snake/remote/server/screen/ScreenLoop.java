@@ -39,6 +39,7 @@ public class ScreenLoop implements Runnable {
 
 		while (!thread.isInterrupted()) {
 			long startTime = System.currentTimeMillis();
+			boolean screenUpdated = false;
 
 			while (true) {
 				ScreenOperation operation = tileQueue.poll();
@@ -53,22 +54,26 @@ public class ScreenLoop implements Runnable {
 					decompressor.setDecompressor(blockDecompressor);
 				} else if (operation.getCachedTile() != null) {
 					decompressor.decompress(operation.getCachedTile());
+					screenUpdated = true;
 				} else if (operation.getCreatedTile() != null) {
 					decompressor.decompress(operation.getCreatedTile());
+					screenUpdated = true;
 				} else if (operation.isScreenSync()) {
 					break;
 				}
 			}
 
-			try {
-				SwingUtilities.invokeAndWait(() -> {
-					canvas.setImageTile(0, 0, decompressor.getImage());
-					canvas.repaint();
-				});
-			} catch (InvocationTargetException | InterruptedException e) {
-				LOG.error("Failed to update canvas image.", e);
+			if (screenUpdated) {
+				try {
+					SwingUtilities.invokeAndWait(() -> {
+						canvas.setImageTile(0, 0, decompressor.getImage());
+						canvas.repaint();
+					});
+				} catch (InvocationTargetException | InterruptedException e) {
+					LOG.error("Failed to update canvas image.", e);
 
-				break;
+					break;
+				}
 			}
 
 			long endTime = System.currentTimeMillis();
