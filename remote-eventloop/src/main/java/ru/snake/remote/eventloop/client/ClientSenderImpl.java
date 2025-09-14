@@ -7,6 +7,7 @@ import ru.snake.remote.eventloop.message.CachedTileMessage;
 import ru.snake.remote.eventloop.message.ChangeQualityMessage;
 import ru.snake.remote.eventloop.message.CreatedTileMessage;
 import ru.snake.remote.eventloop.message.ScreenSizeMessage;
+import ru.snake.remote.eventloop.message.ScreenSyncMessage;
 
 public class ClientSenderImpl implements ClientSender {
 
@@ -22,6 +23,12 @@ public class ClientSenderImpl implements ClientSender {
 	@Override
 	public void sendScreenSize(int width, int height) {
 		kryo.writeClassAndObject(output, new ScreenSizeMessage(width, height));
+		output.flush();
+	}
+
+	@Override
+	public void sendScreenSync() {
+		kryo.writeClassAndObject(output, new ScreenSyncMessage());
 		output.flush();
 	}
 

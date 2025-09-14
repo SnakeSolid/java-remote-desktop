@@ -18,7 +18,7 @@ public class TiledDecompressor {
 
 	private final ImageDecompressor decompressor;
 
-	private final BufferedImage image;
+	private BufferedImage image;
 
 	public TiledDecompressor() {
 		this(DEFAULT_TILE_WIDTH, DEFAULT_TILE_HEIGHT);
@@ -39,6 +39,10 @@ public class TiledDecompressor {
 		return image;
 	}
 
+	public void setImageSize(final int imageWidth, final int imageHeight) {
+		image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+	}
+
 	public void decompress(final CreatedTile tile) {
 		int index = tile.getIndex();
 		byte[] block = tile.getData();
@@ -52,8 +56,10 @@ public class TiledDecompressor {
 		int index = tile.getIndex();
 		byte[] block = cache.get(index);
 
-		BufferedImage subImage = decompressor.decompress(block);
-		image.getGraphics().drawImage(subImage, tile.getX(), tile.getY(), null);
+		if (block != null) {
+			BufferedImage subImage = decompressor.decompress(block);
+			image.getGraphics().drawImage(subImage, tile.getX(), tile.getY(), null);
+		}
 	}
 
 	public void clearCache() {

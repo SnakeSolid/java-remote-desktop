@@ -52,7 +52,7 @@ public class HSLColor {
 		green += m;
 		blue += m;
 
-		return new Color(red, green, blue);
+		return new Color((int) (red * 255 + 0.5), (int) (green * 255 + 0.5), (int) (blue * 255 + 0.5));
 	}
 
 	@Override

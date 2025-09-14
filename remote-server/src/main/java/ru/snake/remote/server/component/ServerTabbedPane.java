@@ -13,7 +13,8 @@ import javax.swing.JTabbedPane;
 import ru.snake.remote.server.screen.ImageCanvas;
 
 @SuppressWarnings("serial")
-public class ServerTabbedPane extends JTabbedPane implements ClientList, KeyboardSwitcher, MouseSwitcher {
+public class ServerTabbedPane extends JTabbedPane
+		implements ClientList, KeyboardSwitcher, MouseSwitcher, QualitySwitcher {
 
 	private final JPanel waitingPanel;
 
@@ -21,12 +22,15 @@ public class ServerTabbedPane extends JTabbedPane implements ClientList, Keyboar
 
 	private final Map<Integer, MouseSwitcher> mouse;
 
+	private final Map<Integer, QualitySwitcher> quality;
+
 	public ServerTabbedPane() {
 		super(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		this.waitingPanel = createWaitingPanel();
 		this.keyboard = new HashMap<>();
 		this.mouse = new HashMap<>();
+		this.quality = new HashMap<>();
 	}
 
 	private JPanel createWaitingPanel() {
@@ -42,7 +46,8 @@ public class ServerTabbedPane extends JTabbedPane implements ClientList, Keyboar
 		final String name,
 		final ImageCanvas canvas,
 		final KeyboardSwitcher keyboardSwitcher,
-		final MouseSwitcher mouseSwitcher
+		final MouseSwitcher mouseSwitcher,
+		final QualitySwitcher qualitySwitcher
 	) {
 		int tabCount = getTabCount();
 
@@ -61,6 +66,7 @@ public class ServerTabbedPane extends JTabbedPane implements ClientList, Keyboar
 
 		keyboard.put(tabIndex, keyboardSwitcher);
 		mouse.put(tabIndex, mouseSwitcher);
+		quality.put(tabIndex, qualitySwitcher);
 
 		return tabIndex;
 	}
@@ -72,6 +78,7 @@ public class ServerTabbedPane extends JTabbedPane implements ClientList, Keyboar
 		if (index < tabCount) {
 			keyboard.remove(index);
 			mouse.remove(index);
+			quality.remove(index);
 
 			remove(index);
 		}
@@ -98,6 +105,36 @@ public class ServerTabbedPane extends JTabbedPane implements ClientList, Keyboar
 
 		if (switcher != null) {
 			switcher.enableMouseEvents(enabled);
+		}
+	}
+
+	@Override
+	public void setLowQuality() {
+		int tabIndex = getSelectedIndex();
+		QualitySwitcher switcher = quality.get(tabIndex);
+
+		if (switcher != null) {
+			switcher.setLowQuality();
+		}
+	}
+
+	@Override
+	public void setMediumQuality() {
+		int tabIndex = getSelectedIndex();
+		QualitySwitcher switcher = quality.get(tabIndex);
+
+		if (switcher != null) {
+			switcher.setMediumQuality();
+		}
+	}
+
+	@Override
+	public void setHighQuality() {
+		int tabIndex = getSelectedIndex();
+		QualitySwitcher switcher = quality.get(tabIndex);
+
+		if (switcher != null) {
+			switcher.setHighQuality();
 		}
 	}
 

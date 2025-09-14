@@ -3,6 +3,7 @@ package ru.snake.remote.eventloop;
 import com.esotericsoftware.kryo.Kryo;
 
 import ru.snake.remote.eventloop.message.CachedTileMessage;
+import ru.snake.remote.eventloop.message.ChangeQualityMessage;
 import ru.snake.remote.eventloop.message.ClearTilesMessage;
 import ru.snake.remote.eventloop.message.CreatedTileMessage;
 import ru.snake.remote.eventloop.message.KeyPressMessage;
@@ -12,6 +13,7 @@ import ru.snake.remote.eventloop.message.MousePressMessage;
 import ru.snake.remote.eventloop.message.MouseReleaseMessage;
 import ru.snake.remote.eventloop.message.MouseScrollMessage;
 import ru.snake.remote.eventloop.message.ScreenSizeMessage;
+import ru.snake.remote.eventloop.message.ScreenSyncMessage;
 
 public class KryoFactory {
 
@@ -22,8 +24,10 @@ public class KryoFactory {
 		KRYO.register(byte[].class);
 		KRYO.register(ClearTilesMessage.class);
 		KRYO.register(ScreenSizeMessage.class);
+		KRYO.register(ScreenSyncMessage.class);
 		KRYO.register(CachedTileMessage.class);
 		KRYO.register(CreatedTileMessage.class);
+		KRYO.register(ChangeQualityMessage.class);
 
 		KRYO.register(MousePressMessage.class);
 		KRYO.register(MouseReleaseMessage.class);

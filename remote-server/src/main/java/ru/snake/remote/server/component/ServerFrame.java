@@ -6,6 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.JToolBar;
 
 import ru.snake.remote.server.Icons;
+import ru.snake.remote.server.action.SetHighQualityAction;
+import ru.snake.remote.server.action.SetLowQualityAction;
+import ru.snake.remote.server.action.SetMediumQualityAction;
 import ru.snake.remote.server.action.SwitchKeyboardAction;
 import ru.snake.remote.server.action.SwitchMouseAction;
 
@@ -39,6 +42,9 @@ public class ServerFrame extends JFrame {
 		toolBar.add(new SwitchKeyboardAction(clientListPane));
 		toolBar.add(new SwitchMouseAction(clientListPane));
 		toolBar.addSeparator();
+		toolBar.add(new SetLowQualityAction(clientListPane::setLowQuality));
+		toolBar.add(new SetMediumQualityAction(clientListPane::setMediumQuality));
+		toolBar.add(new SetHighQualityAction(clientListPane::setHighQuality));
 		add(toolBar, BorderLayout.WEST);
 
 		add(clientListPane, BorderLayout.CENTER);

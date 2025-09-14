@@ -2,6 +2,7 @@ package ru.snake.remote.server.screen;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 import javax.swing.SwingUtilities;
 
@@ -11,10 +12,6 @@ import org.slf4j.LoggerFactory;
 import ru.snake.remote.core.TiledDecompressor;
 import ru.snake.remote.core.block.BlockDecompressor;
 import ru.snake.remote.core.block.BlockDecompressorFactory;
-import ru.snake.remote.core.block.CompressionQuality;
-import ru.snake.remote.core.tile.CachedTile;
-import ru.snake.remote.core.tile.CreatedTile;
-import ru.snake.remote.core.tile.Tile;
 
 public class ScreenLoop implements Runnable {
 
@@ -24,22 +21,14 @@ public class ScreenLoop implements Runnable {
 
 	private final ImageCanvas canvas;
 
-	private final Queue<Tile> tileQueue;
+	private final Queue<ScreenOperation> tileQueue;
 
 	private final TiledDecompressor decompressor;
 
-	public ScreenLoop(final ImageCanvas canvas, final Queue<Tile> tileQueue) {
+	public ScreenLoop(final ImageCanvas canvas, final BlockingQueue<ScreenOperation> screenQueue) {
 		this.canvas = canvas;
-		this.tileQueue = tileQueue;
+		this.tileQueue = screenQueue;
 		this.decompressor = new TiledDecompressor();
-	}
-
-	public synchronized void setQuality(final CompressionQuality quality) {
-		BlockDecompressor blockDecompressor = BlockDecompressorFactory.forQuality(quality);
-
-		synchronized (decompressor) {
-			decompressor.setDecompressor(blockDecompressor);
-		}
 	}
 
 	@Override
@@ -51,19 +40,23 @@ public class ScreenLoop implements Runnable {
 		while (!thread.isInterrupted()) {
 			long startTime = System.currentTimeMillis();
 
-			synchronized (decompressor) {
-				while (true) {
-					Tile tile = tileQueue.poll();
+			while (true) {
+				ScreenOperation operation = tileQueue.poll();
 
-					if (tile == null) {
-						break;
-					} else if (tile instanceof CreatedTile) {
-						decompressor.decompress((CreatedTile) tile);
-					} else if (tile instanceof CachedTile) {
-						decompressor.decompress((CachedTile) tile);
-					} else {
-						throw new RuntimeException("Unknown tile type: " + tile);
-					}
+				if (operation == null) {
+					break;
+				}
+
+				if (operation.getQuality() != null) {
+					BlockDecompressor blockDecompressor = BlockDecompressorFactory.forQuality(operation.getQuality());
+
+					decompressor.setDecompressor(blockDecompressor);
+				} else if (operation.getCachedTile() != null) {
+					decompressor.decompress(operation.getCachedTile());
+				} else if (operation.getCreatedTile() != null) {
+					decompressor.decompress(operation.getCreatedTile());
+				} else if (operation.isScreenSync()) {
+					break;
 				}
 			}
 
@@ -90,6 +83,12 @@ public class ScreenLoop implements Runnable {
 		}
 
 		LOG.info("Screen loop stopped.");
+	}
+
+	public void start(final String remoteAddress) {
+		Thread screenLoop = new Thread(this, String.format("Screen loop (%s)", remoteAddress));
+		screenLoop.setDaemon(true);
+		screenLoop.start();
 	}
 
 }

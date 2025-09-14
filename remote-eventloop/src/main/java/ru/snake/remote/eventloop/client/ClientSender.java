@@ -11,6 +11,8 @@ public interface ClientSender {
 
 	void sendScreenSize(int width, int height);
 
+	void sendScreenSync();
+
 	void sendCachedTile(int x, int y, int index);
 
 	void sendCreatedTile(int x, int y, int index, byte[] data);

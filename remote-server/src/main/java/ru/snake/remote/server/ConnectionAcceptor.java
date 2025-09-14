@@ -12,13 +12,13 @@ import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ru.snake.remote.core.tile.Tile;
 import ru.snake.remote.eventloop.server.ServerSender;
 import ru.snake.remote.server.component.ClientList;
 import ru.snake.remote.server.screen.ImageCanvas;
 import ru.snake.remote.server.screen.KeyboardEventSender;
 import ru.snake.remote.server.screen.MouseEventSender;
 import ru.snake.remote.server.screen.ScreenLoop;
+import ru.snake.remote.server.screen.ScreenOperation;
 
 public class ConnectionAcceptor implements Runnable {
 
@@ -41,8 +41,7 @@ public class ConnectionAcceptor implements Runnable {
 			try {
 				acceptConnection();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.warn("Failed to accept commention", e);
 			}
 		}
 	}
@@ -67,17 +66,19 @@ public class ConnectionAcceptor implements Runnable {
 		canvas.addMouseMotionListener(mouseSender);
 		canvas.addMouseWheelListener(mouseSender);
 		canvas.addKeyListener(keyboardSender);
-		int clientIndex = clientList
-			.addClient(remoteAddress, canvas, keyboardSender::setEnabled, mouseSender::setEnabled);
 		// ------------------------------------
 
-		BlockingQueue<Tile> decompressQueue = new ArrayBlockingQueue<>(1024);
-		Thread screenLoop = new Thread(
-			new ScreenLoop(canvas, decompressQueue),
-			String.format("Screen loop (%s)", remoteAddress)
+		BlockingQueue<ScreenOperation> decompressQueue = new ArrayBlockingQueue<>(1024);
+		ScreenLoop screenLoop = new ScreenLoop(canvas, decompressQueue);
+		screenLoop.start(remoteAddress);
+
+		int clientIndex = clientList.addClient(
+			remoteAddress,
+			canvas,
+			keyboardSender::setEnabled,
+			mouseSender::setEnabled,
+			new QualitySender(sender)
 		);
-		screenLoop.setDaemon(true);
-		screenLoop.start();
 
 		DefaultServer server = new DefaultServer(null, canvas, decompressQueue);
 		MessageHandler messageHandler = new MessageHandler(clientList, clientIndex, clientSocket, server, input);

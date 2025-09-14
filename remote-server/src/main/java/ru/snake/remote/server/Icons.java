@@ -54,6 +54,18 @@ public class Icons {
 		return loadIcon(large ? "/icons/mouse-disabled-32x32.png" : "/icons/mouse-disabled-16x16.png");
 	}
 
+	public static Icon getQualityLowIcon(final boolean large) {
+		return loadIcon(large ? "/icons/codec-low-32x32.png" : "/icons/codec-low-16x16.png");
+	}
+
+	public static Icon getQualityMediumIcon(final boolean large) {
+		return loadIcon(large ? "/icons/codec-medium-32x32.png" : "/icons/codec-medium-16x16.png");
+	}
+
+	public static Icon getQualityHighIcon(final boolean large) {
+		return loadIcon(large ? "/icons/codec-high-32x32.png" : "/icons/codec-high-16x16.png");
+	}
+
 	private synchronized static Icon loadIcon(String path) {
 		ImageIcon icon = ICON_CACHE.get(path);
 

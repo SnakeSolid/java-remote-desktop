@@ -65,6 +65,8 @@ public class ScreenLoop implements Runnable {
 				compressor.compress(screen, tileSender::send, tileSender::send);
 			}
 
+			sender.sendScreenSync();
+
 			long endTime = System.currentTimeMillis();
 			long delta = endTime - startTime;
 

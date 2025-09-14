@@ -6,8 +6,14 @@ public class LinearQuantizer implements Quantizer {
 
 	private final int nBits;
 
+	private final float upperBound;
+
+	private final float upperBoundFactor;
+
 	public LinearQuantizer(final int nBits) {
 		this.nBits = nBits;
+		this.upperBound = 1 << nBits;
+		this.upperBoundFactor = 1.0f / ((1 << nBits) - 1.0f);
 	}
 
 	@Override
@@ -17,12 +23,12 @@ public class LinearQuantizer implements Quantizer {
 
 	@Override
 	public int quantize(final float value) {
-		return (int) (value * 4.0f - EPSILON) & 3;
+		return (int) (value * upperBound - EPSILON);
 	}
 
 	@Override
 	public float dequantize(final int value) {
-		return value / 3.0f;
+		return value * upperBoundFactor;
 	}
 
 }
