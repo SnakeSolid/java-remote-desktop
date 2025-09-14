@@ -3,6 +3,7 @@ package ru.snake.remote.eventloop.server;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Output;
 
+import ru.snake.remote.eventloop.message.ChangeQualityMessage;
 import ru.snake.remote.eventloop.message.ClearTilesMessage;
 import ru.snake.remote.eventloop.message.KeyPressMessage;
 import ru.snake.remote.eventloop.message.KeyReleaseMessage;
@@ -61,6 +62,12 @@ public class ServerSenderImpl implements ServerSender {
 	@Override
 	public synchronized void sendKeyRelease(int keycode) {
 		kryo.writeClassAndObject(output, new KeyReleaseMessage(keycode));
+		output.flush();
+	}
+
+	@Override
+	public void sendChangeQuality(int quality) {
+		kryo.writeClassAndObject(output, new ChangeQualityMessage(quality));
 		output.flush();
 	}
 

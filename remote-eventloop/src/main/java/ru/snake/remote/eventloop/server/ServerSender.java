@@ -23,6 +23,8 @@ public interface ServerSender {
 
 	void sendKeyRelease(int keycode);
 
+	void sendChangeQuality(int quality);
+
 	public static ServerSender create(final OutputStream stream) {
 		Kryo kryo = KryoFactory.kryo();
 		Output output = new Output(stream);

@@ -8,6 +8,6 @@ public interface BlockDecompressor {
 
 	int getLength();
 
-	void decompress(final byte[] buffer, final DecompressorCallback callback);
+	void decompress(final byte[] buffer, final BlockDecompressorCallback callback);
 
 }

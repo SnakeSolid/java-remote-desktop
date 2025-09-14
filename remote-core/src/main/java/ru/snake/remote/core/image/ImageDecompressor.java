@@ -7,22 +7,28 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import ru.snake.remote.core.block.BlockDecompressor;
-import ru.snake.remote.core.block.HalfChromaDecompressor;
+import ru.snake.remote.core.block.BlockDecompressorFactory;
+import ru.snake.remote.core.block.CompressionQuality;
 
 public class ImageDecompressor {
 
-	private final BlockDecompressor decompressor;
+	private BlockDecompressor decompressor;
 
 	public ImageDecompressor() {
-		this.decompressor = new HalfChromaDecompressor();
+		this.decompressor = BlockDecompressorFactory.forQuality(CompressionQuality.LOW);
+	}
+
+	public void setDecompressor(BlockDecompressor decompressor) {
+		this.decompressor = decompressor;
 	}
 
 	public BufferedImage decompress(final byte[] bytes) {
+		byte[] block = new byte[decompressor.getLength()];
+
 		try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 				DataInputStream dis = new DataInputStream(bais)) {
 			int width = dis.readInt();
 			int height = dis.readInt();
-			byte[] block = new byte[decompressor.getLength()];
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 			WritableRaster raster = image.getRaster();
 

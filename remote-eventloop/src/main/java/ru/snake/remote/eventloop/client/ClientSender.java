@@ -15,6 +15,8 @@ public interface ClientSender {
 
 	void sendCreatedTile(int x, int y, int index, byte[] data);
 
+	void sendCompressionQuality(int quality);
+
 	public static ClientSender create(final OutputStream stream) {
 		Kryo kryo = KryoFactory.kryo();
 		Output output = new Output(stream);

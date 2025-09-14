@@ -2,6 +2,7 @@ package ru.snake.remote.core;
 
 import java.awt.image.BufferedImage;
 
+import ru.snake.remote.core.block.BlockDecompressor;
 import ru.snake.remote.core.image.ImageDecompressor;
 import ru.snake.remote.core.tile.CachedTile;
 import ru.snake.remote.core.tile.CreatedTile;
@@ -27,6 +28,11 @@ public class TiledDecompressor {
 		this.cache = new TileMap();
 		this.decompressor = new ImageDecompressor();
 		this.image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+	}
+
+	public void setDecompressor(BlockDecompressor decompressor) {
+		this.cache.clear();
+		this.decompressor.setDecompressor(decompressor);
 	}
 
 	public BufferedImage getImage() {

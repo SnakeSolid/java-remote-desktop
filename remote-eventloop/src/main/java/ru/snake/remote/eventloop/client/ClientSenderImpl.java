@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Output;
 
 import ru.snake.remote.eventloop.message.CachedTileMessage;
+import ru.snake.remote.eventloop.message.ChangeQualityMessage;
 import ru.snake.remote.eventloop.message.CreatedTileMessage;
 import ru.snake.remote.eventloop.message.ScreenSizeMessage;
 
@@ -33,6 +34,12 @@ public class ClientSenderImpl implements ClientSender {
 	@Override
 	public synchronized void sendCreatedTile(int x, int y, int index, byte[] data) {
 		kryo.writeClassAndObject(output, new CreatedTileMessage(x, y, index, data));
+		output.flush();
+	}
+
+	@Override
+	public void sendCompressionQuality(int quality) {
+		kryo.writeClassAndObject(output, new ChangeQualityMessage(quality));
 		output.flush();
 	}
 

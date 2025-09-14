@@ -2,13 +2,17 @@ package ru.snake.remote.core.quantizer;
 
 public class LinearQuantizer implements Quantizer {
 
-	private static final int N_BITS = 2;
-
 	private static final double EPSILON = 1e-6;
+
+	private final int nBits;
+
+	public LinearQuantizer(final int nBits) {
+		this.nBits = nBits;
+	}
 
 	@Override
 	public int getNBits() {
-		return N_BITS;
+		return nBits;
 	}
 
 	@Override

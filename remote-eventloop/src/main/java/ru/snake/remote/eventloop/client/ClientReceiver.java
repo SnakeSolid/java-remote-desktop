@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 
 import ru.snake.remote.eventloop.KryoFactory;
+import ru.snake.remote.eventloop.message.ChangeQualityMessage;
 import ru.snake.remote.eventloop.message.ClearTilesMessage;
 import ru.snake.remote.eventloop.message.KeyPressMessage;
 import ru.snake.remote.eventloop.message.KeyReleaseMessage;
@@ -29,6 +30,8 @@ public interface ClientReceiver {
 	void onKeyPress(int keycode);
 
 	void onKeyRelease(int keycode);
+
+	void onChangeQuality(int quality);
 
 	public static void start(final ClientReceiver receiver, final InputStream stream) {
 		Kryo kryo = KryoFactory.kryo();
@@ -57,6 +60,9 @@ public interface ClientReceiver {
 			} else if (message instanceof KeyReleaseMessage) {
 				KeyReleaseMessage m = (KeyReleaseMessage) message;
 				receiver.onKeyRelease(m.getKeycode());
+			} else if (message instanceof ChangeQualityMessage) {
+				ChangeQualityMessage m = (ChangeQualityMessage) message;
+				receiver.onChangeQuality(m.getQuality());
 			} else {
 				throw new RuntimeException("Unsupported message type: " + message.getClass());
 			}

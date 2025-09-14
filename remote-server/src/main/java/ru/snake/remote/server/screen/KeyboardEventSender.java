@@ -17,8 +17,6 @@ public class KeyboardEventSender implements KeyListener {
 	}
 
 	public void setEnabled(boolean isEnabled) {
-		System.out.println("keyboard " + isEnabled);
-
 		this.isEnabled = isEnabled;
 	}
 

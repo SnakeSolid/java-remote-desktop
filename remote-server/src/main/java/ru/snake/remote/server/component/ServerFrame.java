@@ -3,7 +3,6 @@ package ru.snake.remote.server.component;
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 import ru.snake.remote.server.Icons;
@@ -18,8 +17,6 @@ public class ServerFrame extends JFrame {
 	private static final int DEFAULT_HEIGHT = 768;
 
 	private ServerTabbedPane clientListPane;
-
-	private JPanel waitingPanel;
 
 	public ServerFrame() {
 		super("Remote Desktop Server");

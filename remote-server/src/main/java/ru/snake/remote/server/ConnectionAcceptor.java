@@ -79,8 +79,8 @@ public class ConnectionAcceptor implements Runnable {
 		screenLoop.setDaemon(true);
 		screenLoop.start();
 
-		DefaultServer client = new DefaultServer(null, canvas, decompressQueue);
-		MessageHandler messageHandler = new MessageHandler(clientList, clientIndex, clientSocket, client, input);
+		DefaultServer server = new DefaultServer(null, canvas, decompressQueue);
+		MessageHandler messageHandler = new MessageHandler(clientList, clientIndex, clientSocket, server, input);
 		Thread serverReceiver = new Thread(messageHandler, String.format("Message handler (%s)", remoteAddress));
 		serverReceiver.setDaemon(true);
 		serverReceiver.start();

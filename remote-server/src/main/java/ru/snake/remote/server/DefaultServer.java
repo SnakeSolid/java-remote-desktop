@@ -64,4 +64,10 @@ public class DefaultServer implements ServerReceiver {
 		}
 	}
 
+	@Override
+	public void onChangeQuality(int quality) {
+		System.out.println();
+		
+	}
+
 }

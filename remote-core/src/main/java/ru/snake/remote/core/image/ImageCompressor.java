@@ -6,17 +6,22 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import ru.snake.remote.core.block.BlockCompressor;
-import ru.snake.remote.core.block.HalfChromaCompressor;
+import ru.snake.remote.core.block.BlockCompressorFactory;
+import ru.snake.remote.core.block.CompressionQuality;
 
 public class ImageCompressor {
 
 	private final HSLBuffer hslBuffer;
 
-	private final BlockCompressor compressor;
+	private BlockCompressor compressor;
 
 	public ImageCompressor() {
 		this.hslBuffer = new HSLBuffer();
-		this.compressor = new HalfChromaCompressor();
+		this.compressor = BlockCompressorFactory.forQuality(CompressionQuality.LOW);
+	}
+
+	public void setCompressor(BlockCompressor compressor) {
+		this.compressor = compressor;
 	}
 
 	public byte[] compress(final BufferedImage image) {

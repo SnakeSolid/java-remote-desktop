@@ -8,8 +8,6 @@ public interface BlockCompressor {
 
 	int getHeight();
 
-	int getLength();
-
 	byte[] compress(int x, int y, HSLBuffer buffer);
 
 }

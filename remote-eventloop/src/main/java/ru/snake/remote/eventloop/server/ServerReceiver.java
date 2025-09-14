@@ -7,6 +7,7 @@ import com.esotericsoftware.kryo.io.Input;
 
 import ru.snake.remote.eventloop.KryoFactory;
 import ru.snake.remote.eventloop.message.CachedTileMessage;
+import ru.snake.remote.eventloop.message.ChangeQualityMessage;
 import ru.snake.remote.eventloop.message.ClearTilesMessage;
 import ru.snake.remote.eventloop.message.CreatedTileMessage;
 import ru.snake.remote.eventloop.message.ScreenSizeMessage;
@@ -20,6 +21,8 @@ public interface ServerReceiver {
 	void onCreateTile(int x, int y, int index, byte[] data);
 
 	void onCachedTile(int x, int y, int index);
+
+	void onChangeQuality(int quality);
 
 	public static void start(final ServerReceiver receiver, final InputStream stream) {
 		Kryo kryo = KryoFactory.kryo();
@@ -39,6 +42,9 @@ public interface ServerReceiver {
 			} else if (message instanceof CachedTileMessage) {
 				CachedTileMessage m = (CachedTileMessage) message;
 				receiver.onCachedTile(m.getX(), m.getY(), m.getIndex());
+			} else if (message instanceof ChangeQualityMessage) {
+				ChangeQualityMessage m = (ChangeQualityMessage) message;
+				receiver.onChangeQuality(m.getQuality());
 			} else {
 				throw new RuntimeException("Unsupported message type: " + message.getClass());
 			}

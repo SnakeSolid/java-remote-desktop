@@ -3,6 +3,7 @@ package ru.snake.remote.core;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
+import ru.snake.remote.core.block.BlockCompressor;
 import ru.snake.remote.core.image.ImageCompressor;
 import ru.snake.remote.core.tile.CachedTile;
 import ru.snake.remote.core.tile.CreatedTile;
@@ -34,6 +35,11 @@ public class TiledCompressor {
 		this.tileHeight = tileHeight;
 	}
 
+	public void setCompressor(BlockCompressor compressor) {
+		this.cache.clear();
+		this.compressor.setCompressor(compressor);
+	}
+
 	public void compress(
 		final BufferedImage image,
 		final Consumer<CreatedTile> createdCallback,
@@ -59,7 +65,7 @@ public class TiledCompressor {
 		}
 	}
 
-	public void clearCache() {
+	public synchronized void clearCache() {
 		cache.clear();
 	}
 

@@ -9,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ru.snake.remote.core.TiledDecompressor;
+import ru.snake.remote.core.block.BlockDecompressor;
+import ru.snake.remote.core.block.BlockDecompressorFactory;
+import ru.snake.remote.core.block.CompressionQuality;
 import ru.snake.remote.core.tile.CachedTile;
 import ru.snake.remote.core.tile.CreatedTile;
 import ru.snake.remote.core.tile.Tile;
@@ -31,6 +34,14 @@ public class ScreenLoop implements Runnable {
 		this.decompressor = new TiledDecompressor();
 	}
 
+	public synchronized void setQuality(final CompressionQuality quality) {
+		BlockDecompressor blockDecompressor = BlockDecompressorFactory.forQuality(quality);
+
+		synchronized (decompressor) {
+			decompressor.setDecompressor(blockDecompressor);
+		}
+	}
+
 	@Override
 	public void run() {
 		LOG.info("Screen loop started.");
@@ -40,17 +51,19 @@ public class ScreenLoop implements Runnable {
 		while (!thread.isInterrupted()) {
 			long startTime = System.currentTimeMillis();
 
-			while (true) {
-				Tile tile = tileQueue.poll();
+			synchronized (decompressor) {
+				while (true) {
+					Tile tile = tileQueue.poll();
 
-				if (tile == null) {
-					break;
-				} else if (tile instanceof CreatedTile) {
-					decompressor.decompress((CreatedTile) tile);
-				} else if (tile instanceof CachedTile) {
-					decompressor.decompress((CachedTile) tile);
-				} else {
-					throw new RuntimeException("Unknown tile type: " + tile);
+					if (tile == null) {
+						break;
+					} else if (tile instanceof CreatedTile) {
+						decompressor.decompress((CreatedTile) tile);
+					} else if (tile instanceof CachedTile) {
+						decompressor.decompress((CachedTile) tile);
+					} else {
+						throw new RuntimeException("Unknown tile type: " + tile);
+					}
 				}
 			}
 

@@ -1,6 +1,7 @@
 package ru.snake.remote.client;
 
 import ru.snake.remote.client.screen.ScreenLoop;
+import ru.snake.remote.core.block.CompressionQuality;
 import ru.snake.remote.eventloop.client.ClientReceiver;
 import ru.snake.remote.eventloop.client.ClientSender;
 
@@ -51,6 +52,15 @@ public class DefaultClient implements ClientReceiver {
 	@Override
 	public void onKeyRelease(int keycode) {
 		robot.keyRelease(keycode);
+	}
+
+	@Override
+	public void onChangeQuality(int quality) {
+		CompressionQuality[] values = CompressionQuality.values();
+
+		if (quality >= 0 && quality < values.length) {
+			screenLoop.setQuality(values[quality]);
+		}
 	}
 
 }
