@@ -31,6 +31,8 @@ public class ServerTabbedPane extends JTabbedPane
 		this.keyboard = new HashMap<>();
 		this.mouse = new HashMap<>();
 		this.quality = new HashMap<>();
+
+		addTab("No connections", waitingPanel);
 	}
 
 	private JPanel createWaitingPanel() {
