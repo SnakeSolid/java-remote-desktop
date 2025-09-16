@@ -7,7 +7,7 @@
 
 	<parent>
 		<groupId>ru.snake.remote</groupId>
-		<artifactId>desktop</artifactId>
+		<artifactId>remote-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
