@@ -80,7 +80,7 @@ public class ClipboardSender implements FlavorListener {
 
 			if (width > 0 && height > 0 && width * height <= MAX_IMAGE_SIZE) {
 				int[] data = new int[width * height];
-				image.getRGB(0, 0, width, height, data, 0, 0);
+				image.getRGB(0, 0, width, height, data, 0, width);
 
 				sender.sendClipboardImage(width, height, data);
 			}

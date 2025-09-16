@@ -98,7 +98,7 @@ public class DefaultServer implements ServerReceiver {
 	@Override
 	public void onClipboardImage(int width, int height, int[] data) {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		image.setRGB(0, 0, width, height, data, 0, 0);
+		image.setRGB(0, 0, width, height, data, 0, width);
 
 		Transferable transferable = new TransferableImage(image);
 		clipboard.setContents(transferable, null);

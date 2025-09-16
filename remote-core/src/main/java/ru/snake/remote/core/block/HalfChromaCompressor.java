@@ -55,8 +55,9 @@ public class HalfChromaCompressor implements BlockCompressor {
 		stream.write(lumaQuantizer.quantize(lightness[offset + width + 2]), lumaQuantizer.getNBits());
 		stream.write(lumaQuantizer.quantize(lightness[offset + width + 3]), lumaQuantizer.getNBits());
 
-		// Left block hue
-		float leftHue = (hue[offset + 0] + hue[offset + 1] + hue[offset + width + 0] + hue[offset + width + 1]) / 4.0f;
+		// Left block hue. In both blocks use only first value to avoid corner
+		// cases during average calculation.
+		float leftHue = hue[offset + 0];
 		stream.write(chromaQuantizer.quantize(leftHue), chromaQuantizer.getNBits());
 
 		// Left block saturation
@@ -65,7 +66,7 @@ public class HalfChromaCompressor implements BlockCompressor {
 		stream.write(chromaQuantizer.quantize(leftSat), chromaQuantizer.getNBits());
 
 		// Right block hue
-		float rightHue = (hue[offset + 2] + hue[offset + 3] + hue[offset + width + 2] + hue[offset + width + 3]) / 4.0f;
+		float rightHue = hue[offset + 2];
 		stream.write(chromaQuantizer.quantize(rightHue), chromaQuantizer.getNBits());
 
 		// Right block saturation
