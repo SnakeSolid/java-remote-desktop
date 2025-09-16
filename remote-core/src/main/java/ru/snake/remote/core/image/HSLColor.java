@@ -69,22 +69,22 @@ public class HSLColor {
 		float min = Math.min(r, Math.min(g, b));
 		float delta = max - min;
 
-		float h = 0;
-		float s = 0;
-		float l = (max + min) / 2;
+		float h = 0.0f;
+		float s = 0.0f;
+		float l = (max + min) / 2.0f;
 
 		if (delta != 0) {
-			s = delta / (1 - Math.abs(2 * l - 1));
+			s = (l > 0.5f) ? delta / (2f - max - min) : delta / (max + min);
 
 			if (max == r) {
-				h = (g - b) / delta + (g < b ? 6 : 0);
+				h = (g - b) / delta % 6.0f;
 			} else if (max == g) {
-				h = (b - r) / delta + 2;
+				h = (b - r) / delta + 2.0f;
 			} else {
-				h = (r - g) / delta + 4;
+				h = (r - g) / delta + 4.0f;
 			}
 
-			h /= 6;
+			h /= 6.0f;
 		}
 
 		return new HSLColor(h, s, l);
