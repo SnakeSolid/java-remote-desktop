@@ -77,7 +77,7 @@ public class HSLColor {
 			s = (l > 0.5f) ? delta / (2f - max - min) : delta / (max + min);
 
 			if (max == r) {
-				h = (g - b) / delta % 6.0f;
+				h = ((g - b) / delta + 6.0f) % 6.0f;
 			} else if (max == g) {
 				h = (b - r) / delta + 2.0f;
 			} else {

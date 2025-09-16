@@ -24,6 +24,8 @@ public class KryoFactory {
 	static {
 		KRYO = new Kryo();
 		KRYO.register(byte[].class);
+		KRYO.register(int[].class);
+
 		KRYO.register(ClearTilesMessage.class);
 		KRYO.register(ScreenSizeMessage.class);
 		KRYO.register(ScreenSyncMessage.class);

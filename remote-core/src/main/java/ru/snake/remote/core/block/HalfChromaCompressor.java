@@ -20,7 +20,7 @@ public class HalfChromaCompressor implements BlockCompressor {
 	public HalfChromaCompressor(final int lumaBits, final int chromaBits) {
 		this.lumaQuantizer = new LinearQuantizer(lumaBits);
 		this.chromaQuantizer = new LinearQuantizer(chromaBits);
-		this.stream = new OutputBitStream(lumaBits * (WIDTH * HEIGHT) + chromaBits * 2);
+		this.stream = new OutputBitStream(lumaBits * (WIDTH * HEIGHT) / 8 + 2 * chromaBits * 2 / 8);
 	}
 
 	@Override

@@ -20,8 +20,8 @@ public class Main {
 		TiledCompressor compressor = new TiledCompressor();
 		TiledDecompressor decompressor = new TiledDecompressor();
 
-		compressor.setCompressor(BlockCompressorFactory.forQuality(CompressionQuality.MEDIUM));
-		decompressor.setDecompressor(BlockDecompressorFactory.forQuality(CompressionQuality.MEDIUM));
+		compressor.setCompressor(BlockCompressorFactory.forQuality(CompressionQuality.HIGH));
+		decompressor.setDecompressor(BlockDecompressorFactory.forQuality(CompressionQuality.HIGH));
 
 		for (int index = 1; index < args.length; index += 1) {
 			List<CreatedTile> createdTiles = new ArrayList<>();
