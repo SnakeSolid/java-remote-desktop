@@ -66,7 +66,7 @@ public class ServerSenderImpl implements ServerSender {
 	}
 
 	@Override
-	public void sendChangeQuality(int quality) {
+	public synchronized void sendChangeQuality(int quality) {
 		kryo.writeClassAndObject(output, new ChangeQualityMessage(quality));
 		output.flush();
 	}

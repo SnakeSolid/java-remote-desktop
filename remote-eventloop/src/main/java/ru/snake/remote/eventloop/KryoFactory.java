@@ -5,6 +5,8 @@ import com.esotericsoftware.kryo.Kryo;
 import ru.snake.remote.eventloop.message.CachedTileMessage;
 import ru.snake.remote.eventloop.message.ChangeQualityMessage;
 import ru.snake.remote.eventloop.message.ClearTilesMessage;
+import ru.snake.remote.eventloop.message.ClipboardImageMessage;
+import ru.snake.remote.eventloop.message.ClipboardTextMessage;
 import ru.snake.remote.eventloop.message.CreatedTileMessage;
 import ru.snake.remote.eventloop.message.KeyPressMessage;
 import ru.snake.remote.eventloop.message.KeyReleaseMessage;
@@ -36,6 +38,9 @@ public class KryoFactory {
 
 		KRYO.register(KeyPressMessage.class);
 		KRYO.register(KeyReleaseMessage.class);
+
+		KRYO.register(ClipboardImageMessage.class);
+		KRYO.register(ClipboardTextMessage.class);
 	}
 
 	private KryoFactory() {

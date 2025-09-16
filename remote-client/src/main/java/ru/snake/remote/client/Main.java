@@ -17,6 +17,7 @@ import picocli.CommandLine;
 import ru.snake.remote.client.screen.ScreenLoop;
 import ru.snake.remote.eventloop.client.ClientReceiver;
 import ru.snake.remote.eventloop.client.ClientSender;
+import ru.snake.remote.eventloop.clipboard.ClipboardSender;
 
 public class Main {
 
@@ -33,6 +34,7 @@ public class Main {
 		while (true) {
 			try (Socket socket = new Socket(address, port)) {
 				socket.setTcpNoDelay(true);
+				ClipboardSender clipboard = null;
 
 				try (InputStream input = socket.getInputStream(); OutputStream output = socket.getOutputStream()) {
 					RobotWrapper robot = RobotWrapper.create();
@@ -42,9 +44,16 @@ public class Main {
 					screenThread.setDaemon(true);
 					screenThread.start();
 
+					clipboard = ClipboardSender.create(sender);
+					clipboard.register();
+
 					DefaultClient client = new DefaultClient(sender, screenLoop, robot);
 					ClientReceiver.start(client, input);
 				} catch (IOException | KryoException e) {
+					if (clipboard != null) {
+						clipboard.deregister();
+					}
+
 					LOG.error("Failed to communication with server.", e);
 				}
 			} catch (IOException e) {
@@ -55,7 +64,7 @@ public class Main {
 				break;
 			} else {
 				try {
-					LOG.info("Reconnecting in {} seconds...", reconnectDelay);
+					LOG.warn("Reconnecting in {} seconds...", reconnectDelay);
 
 					Thread.sleep(Duration.ofSeconds(reconnectDelay).toMillis());
 				} catch (InterruptedException ie) {

@@ -19,6 +19,10 @@ public interface ClientSender {
 
 	void sendCompressionQuality(int quality);
 
+	void sendClipboardText(String text);
+
+	void sendClipboardImage(int width, int height, int[] data);
+
 	public static ClientSender create(final OutputStream stream) {
 		Kryo kryo = KryoFactory.kryo();
 		Output output = new Output(stream);

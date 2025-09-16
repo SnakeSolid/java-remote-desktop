@@ -80,7 +80,7 @@ public class ConnectionAcceptor implements Runnable {
 			new QualitySender(sender)
 		);
 
-		DefaultServer server = new DefaultServer(null, canvas, decompressQueue);
+		DefaultServer server = new DefaultServer(canvas, decompressQueue);
 		MessageHandler messageHandler = new MessageHandler(clientList, clientIndex, clientSocket, server, input);
 		Thread serverReceiver = new Thread(messageHandler, String.format("Message handler (%s)", remoteAddress));
 		serverReceiver.setDaemon(true);

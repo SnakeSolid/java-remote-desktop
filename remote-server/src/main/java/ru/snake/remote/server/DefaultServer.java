@@ -1,5 +1,10 @@
 package ru.snake.remote.server;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.BlockingQueue;
 
@@ -12,7 +17,6 @@ import ru.snake.remote.core.block.CompressionQuality;
 import ru.snake.remote.core.tile.CachedTile;
 import ru.snake.remote.core.tile.CreatedTile;
 import ru.snake.remote.eventloop.server.ServerReceiver;
-import ru.snake.remote.eventloop.server.ServerSender;
 import ru.snake.remote.server.screen.ImageCanvas;
 import ru.snake.remote.server.screen.ScreenOperation;
 
@@ -20,20 +24,16 @@ public class DefaultServer implements ServerReceiver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultServer.class);
 
-	private final ServerSender sender;
-
 	private final ImageCanvas canvas;
 
 	private final BlockingQueue<ScreenOperation> tileQueue;
 
-	public DefaultServer(
-		final ServerSender sender,
-		final ImageCanvas canvas,
-		final BlockingQueue<ScreenOperation> screenQueue
-	) {
-		this.sender = sender;
+	private final Clipboard clipboard;
+
+	public DefaultServer(final ImageCanvas canvas, final BlockingQueue<ScreenOperation> screenQueue) {
 		this.canvas = canvas;
 		this.tileQueue = screenQueue;
+		this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 	}
 
 	@Override
@@ -87,6 +87,21 @@ public class DefaultServer implements ServerReceiver {
 			} catch (InterruptedException e) {
 			}
 		}
+	}
+
+	@Override
+	public void onClipboardText(String text) {
+		Transferable transferable = new StringSelection(text);
+		clipboard.setContents(transferable, null);
+	}
+
+	@Override
+	public void onClipboardImage(int width, int height, int[] data) {
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		image.setRGB(0, 0, width, height, data, 0, 0);
+
+		Transferable transferable = new TransferableImage(image);
+		clipboard.setContents(transferable, null);
 	}
 
 }

@@ -5,6 +5,8 @@ import com.esotericsoftware.kryo.io.Output;
 
 import ru.snake.remote.eventloop.message.CachedTileMessage;
 import ru.snake.remote.eventloop.message.ChangeQualityMessage;
+import ru.snake.remote.eventloop.message.ClipboardImageMessage;
+import ru.snake.remote.eventloop.message.ClipboardTextMessage;
 import ru.snake.remote.eventloop.message.CreatedTileMessage;
 import ru.snake.remote.eventloop.message.ScreenSizeMessage;
 import ru.snake.remote.eventloop.message.ScreenSyncMessage;
@@ -21,13 +23,13 @@ public class ClientSenderImpl implements ClientSender {
 	}
 
 	@Override
-	public void sendScreenSize(int width, int height) {
+	public synchronized void sendScreenSize(int width, int height) {
 		kryo.writeClassAndObject(output, new ScreenSizeMessage(width, height));
 		output.flush();
 	}
 
 	@Override
-	public void sendScreenSync() {
+	public synchronized void sendScreenSync() {
 		kryo.writeClassAndObject(output, new ScreenSyncMessage());
 		output.flush();
 	}
@@ -45,8 +47,20 @@ public class ClientSenderImpl implements ClientSender {
 	}
 
 	@Override
-	public void sendCompressionQuality(int quality) {
+	public synchronized void sendCompressionQuality(int quality) {
 		kryo.writeClassAndObject(output, new ChangeQualityMessage(quality));
+		output.flush();
+	}
+
+	@Override
+	public synchronized void sendClipboardText(String text) {
+		kryo.writeClassAndObject(output, new ClipboardTextMessage(text));
+		output.flush();
+	}
+
+	@Override
+	public synchronized void sendClipboardImage(int width, int height, int[] data) {
+		kryo.writeClassAndObject(output, new ClipboardImageMessage(width, height, data));
 		output.flush();
 	}
 

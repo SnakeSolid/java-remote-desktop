@@ -9,6 +9,8 @@ import ru.snake.remote.eventloop.KryoFactory;
 import ru.snake.remote.eventloop.message.CachedTileMessage;
 import ru.snake.remote.eventloop.message.ChangeQualityMessage;
 import ru.snake.remote.eventloop.message.ClearTilesMessage;
+import ru.snake.remote.eventloop.message.ClipboardImageMessage;
+import ru.snake.remote.eventloop.message.ClipboardTextMessage;
 import ru.snake.remote.eventloop.message.CreatedTileMessage;
 import ru.snake.remote.eventloop.message.ScreenSizeMessage;
 import ru.snake.remote.eventloop.message.ScreenSyncMessage;
@@ -26,6 +28,10 @@ public interface ServerReceiver {
 	void onCachedTile(int x, int y, int index);
 
 	void onChangeQuality(int quality);
+
+	void onClipboardText(String text);
+
+	void onClipboardImage(int width, int height, int[] data);
 
 	public static void start(final ServerReceiver receiver, final InputStream stream) {
 		Kryo kryo = KryoFactory.kryo();
@@ -50,6 +56,12 @@ public interface ServerReceiver {
 			} else if (message instanceof ChangeQualityMessage) {
 				ChangeQualityMessage m = (ChangeQualityMessage) message;
 				receiver.onChangeQuality(m.getQuality());
+			} else if (message instanceof ClipboardTextMessage) {
+				ClipboardTextMessage m = (ClipboardTextMessage) message;
+				receiver.onClipboardText(m.getText());
+			} else if (message instanceof ClipboardImageMessage) {
+				ClipboardImageMessage m = (ClipboardImageMessage) message;
+				receiver.onClipboardImage(m.getWidth(), m.getHeight(), m.getData());
 			} else {
 				throw new RuntimeException("Unsupported message type: " + message.getClass());
 			}
